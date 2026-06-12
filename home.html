@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGTECH | Enciclopedia Estudiantil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F52BA',
+                        secondary: '#20B2AA',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        exam: '#7B2CBF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .transition-custom { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-light font-sans text-dark min-h-screen flex flex-col">
+
+    <!-- Encabezado -->
+    <header class="bg-gradient-to-r from-primary to-[#194596] text-white py-4 px-4 md:px-8 shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <i class="fa fa-book text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">ENCICLOPEDIA ESTUDIANTIL</h1>
+                    <p class="text-white/80 text-sm">KGTECH</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-4 max-w-6xl mx-auto w-full px-4 py-6">
+
+        <!-- 📋 LISTADO DE TEMAS - LADO IZQUIERDO -->
+        <aside class="w-full md:w-1/4 bg-white rounded-xl shadow-lg p-4 h-fit sticky top-24 border border-gray-100">
+            <h3 class="font-bold text-primary text-lg mb-3 flex items-center gap-2">
+                <i class="fa fa-list-ul"></i> Temas disponibles
+            </h3>
+            <div class="text-sm space-y-2 text-gray-700 max-h-[500px] overflow-y-auto pr-2 scrollbar-hide">
+                <p class="font-semibold text-gray-800">Lengua Española:</p>
+                <ul class="list-disc pl-4 space-y-1 text-gray-600">
+                    <li>Qué son textos</li>
+                    <li>A qué se refiere función</li>
+                    <li>Textos funcionales</li>
+                    <li>Ejemplos textos funcionales</li>
+                    <li>Instructivo</li>
+                    <li>Qué es un instructivo</li>
+                    <li>Función del instructivo</li>
+                    <li>Estructura del instructivo</li>
+                    <li>Se impersonal</li>
+                    <li>Conectores de orden</li>
+                    <li>Adverbios</li>
+                    <li>Léxico técnico</li>
+                    <li>Signos y números</li>
+                    <li>Conectores de finalidad</li>
+                    <li>Clasificación de instructivos</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 📚 CONTENIDO PRINCIPAL -->
+        <main class="w-full md:w-3/4 space-y-6">
+
+            <!-- Sección de Búsqueda -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100">
+                <div class="text-center">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-3">Busca tu tema</h2>
+                    <p class="text-gray-600 mb-6">Escribe como quieras: ej: "instructivo", "qué es el instructivo", "definición de instructivo"... te entenderá igual</p>
+                    
+                    <div class="relative max-w-2xl mx-auto">
+                        <div class="flex items-center border-2 border-gray-300 rounded-xl overflow-hidden focus-within:border-primary focus-within:shadow-lg transition-custom bg-gray-50">
+                            <i class="fa fa-search text-gray-500 ml-4 text-lg"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Ej: Que son textos, Que es el instructivo, Adverbios..." 
+                                class="w-full py-4 px-3 text-lg bg-transparent outline-none text-dark placeholder:text-gray-500"
+                            >
+                            <button id="searchBtn" class="bg-primary text-white px-6 py-4 hover:bg-[#194596] transition-custom font-semibold">
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div class="mt-8">
+                    <!-- Mensaje Inicial -->
+                    <div id="mensajeInicial" class="text-center py-10 text-gray-500">
+                        <i class="fa fa-file-text-o text-6xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">Escribe un tema para ver la información optimizada</p>
+                    </div>
+
+                    <!-- Contenido de la Respuesta -->
+                    <div id="contenidoRespuesta" class="hidden">
+                        <div class="p-6 md:p-8 border border-gray-100 rounded-xl bg-gray-50/50">
+                            
+                            <!-- Título y Materia -->
+                            <div class="mb-6 pb-4 border-b border-gray-200">
+                                <h3 id="tituloTema" class="text-2xl md:text-3xl font-bold text-dark"></h3>
+                                <p id="nombreMateria" class="text-gray-500 text-sm mt-1">Materia: <span class="font-medium"></span></p>
+                            </div>
+
+                            <!-- 1. DEFINICION -->
+                            <div class="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-primary">
+                                <h4 class="font-bold text-primary text-lg mb-2">Definicion</h4>
+                                <p id="def1" class="text-gray-700 leading-relaxed"></p>
+                            </div>
+
+                            <!-- 2. CLARO Y EXPLICADO -->
+                            <div class="mb-6 p-4 bg-teal-50 rounded-lg border-l-4 border-secondary">
+                                <h4 class="font-bold text-secondary text-lg mb-2">Claro y explicado</h4>
+                                <p id="def2" class="text-gray-700 leading-relaxed"></p>
+                            </div>
+
+                            <!-- 3. CLARISIMO -->
+                            <div class="mb-8 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                                <h4 class="font-bold text-orange-500 text-lg mb-2">Clarisimo</h4>
+                                <p id="def3" class="text-gray-800 font-medium"></p>
+                            </div>
+
+                            <!-- EJEMPLO -->
+                            <div class="p-5 bg-gray-50 rounded-xl border border-gray-200">
+                                <h4 class="font-bold text-dark text-lg mb-3 flex items-center gap-2">
+                                    <i class="fa fa-lightbulb-o text-yellow-500"></i> Ejemplo
+                                </h4>
+                                <p id="ejemploTexto" class="text-gray-700"></p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Cargando -->
+                    <div id="cargando" class="hidden text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-3"></div>
+                        <p class="text-gray-600">Buscando información...</p>
+                    </div>
+
+                    <!-- Error / No encontrado -->
+                    <div id="noEncontrado" class="hidden text-center py-12 text-red-600 bg-red-50 rounded-xl border border-red-100">
+                        <i class="fa fa-exclamation-triangle text-4xl mb-3"></i>
+                        <p class="font-semibold">El tema no está registrado</p>
+                        <p class="text-sm text-red-500">Verifica que el nombre esté escrito correctamente</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 📝 APARTADO: ¿YA APRENDISTE? - EXAMEN -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-2 border-exam/20">
+                <h2 class="text-2xl font-bold text-exam mb-4 text-center">¿Ya aprendiste?</h2>
+                <div class="text-center">
+                    <button id="btnAbrirExamen" class="bg-exam text-white px-8 py-3 rounded-xl font-semibold hover:bg-exam/90 transition-custom shadow-lg">
+                        <i class="fa fa-pencil-square-o mr-2"></i> Ir al Examen
+                    </button>
+                </div>
+
+                <!-- VENTANA DEL EXAMEN (MODAL) -->
+                <div id="modalExamen" class="hidden fixed inset-0 bg-dark/70 z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 relative">
+                        <button id="cerrarModal" class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl"><i class="fa fa-times"></i></button>
+                        
+                        <h3 class="text-2xl font-bold text-exam text-center mb-4">EXAMEN DE LENGUA ESPAÑOLA</h3>
+
+                        <!-- DATOS DEL ESTUDIANTE -->
+                        <div id="datosEstudiante" class="mb-6 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                            <h4 class="font-bold text-exam mb-3">Datos del estudiante</h4>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Nombre completo:</label>
+                                    <input type="text" id="nombreEst" class="w-full mt-1 p-2 border rounded-lg" placeholder="Tu nombre">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Grado:</label>
+                                    <input type="text" id="gradoEst" class="w-full mt-1 p-2 border rounded-lg" placeholder="Ej: 4to">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Sección:</label>
+                                    <input type="text" id="seccionEst" class="w-full mt-1 p-2 border rounded-lg" placeholder="Ej: A">
+                                </div>
+                            </div>
+                            <button id="iniciarExamen" class="mt-4 bg-exam text-white px-4 py-2 rounded-lg hover:bg-exam/90 transition-custom">Comenzar Examen</button>
+                        </div>
+
+                        <!-- TIEMPO Y HORA -->
+                        <div id="infoExamen" class="hidden mb-4 flex flex-col md:flex-row justify-between items-center bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                            <div>
+                                <span class="font-semibold">Hora de inicio: </span>
+                                <span id="horaInicio">--:--:--</span>
+                            </div>
+                            <div class="text-red-600 font-bold text-lg">
+                                Tiempo restante: <span id="tiempoRestante">20:00</span>
+                            </div>
+                        </div>
+
+                        <!-- PREGUNTAS DEL EXAMEN -->
+                        <div id="preguntasExamen" class="hidden space-y-6">
+                            <p class="text-sm text-gray-500 italic">Valor total: 100 puntos</p>
+
+                            <!-- Pregunta 1 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">1. ¿Qué son los textos funcionales?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p1" value="0"> a) Textos que solo sirven para leer</label>
+                                    <label class="block"><input type="radio" name="p1" value="10"> b) Escritos con finalidad práctica y útil</label>
+                                    <label class="block"><input type="radio" name="p1" value="0"> c) Historias de ficción</label>
+                                    <label class="block"><input type="radio" name="p1" value="0"> d) Solo recetas de cocina</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 2 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">2. ¿Cuál es la función principal de un instructivo?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p2" value="0"> a) Entretener</label>
+                                    <label class="block"><input type="radio" name="p2" value="0"> b) Vender productos</label>
+                                    <label class="block"><input type="radio" name="p2" value="10"> c) Orientar y enseñar procedimientos</label>
+                                    <label class="block"><input type="radio" name="p2" value="0"> d) Describir paisajes</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 3 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">3. ¿Qué elementos componen la estructura general de un instructivo?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p3" value="0"> a) Inicio, nudo y desenlace</label>
+                                    <label class="block"><input type="radio" name="p3" value="10"> b) Título, materiales, pasos y advertencias</label>
+                                    <label class="block"><input type="radio" name="p3" value="0"> c) Autor, fecha y dedicatoria</label>
+                                    <label class="block"><input type="radio" name="p3" value="0"> d) Solo números y letras</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 4 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">4. ¿A qué se refiere el "se" impersonal?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p4" value="10"> a) Acciones sin indicar quién las realiza</label>
+                                    <label class="block"><input type="radio" name="p4" value="0"> b) Cuando hablamos de nosotros mismos</label>
+                                    <label class="block"><input type="radio" name="p4" value="0"> c) Un error gramatical</label>
+                                    <label class="block"><input type="radio" name="p4" value="0"> d) Una forma de mandar</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 5 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">5. ¿Para qué sirven los conectores de orden?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p5" value="0"> a) Para adornar el texto</label>
+                                    <label class="block"><input type="radio" name="p5" value="10"> b) Para marcar la secuencia de los pasos</label>
+                                    <label class="block"><input type="radio" name="p5" value="0"> c) Para hacer preguntas</label>
+                                    <label class="block"><input type="radio" name="p5" value="0"> d) No tienen función</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 6 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">6. ¿Qué son los adverbios?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p6" value="0"> a) Palabras que nombran cosas</label>
+                                    <label class="block"><input type="radio" name="p6" value="10"> b) Palabras que modifican y detallan acciones</label>
+                                    <label class="block"><input type="radio" name="p6" value="0"> c) Palabras que unen oraciones</label>
+                                    <label class="block"><input type="radio" name="p6" value="0"> d) Lo mismo que los verbos</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 7 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">7. ¿Qué es el léxico técnico?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p7" value="10"> a) Vocabulario especializado de un área</label>
+                                    <label class="block"><input type="radio" name="p7" value="0"> b) Palabras comunes de todos los días</label>
+                                    <label class="block"><input type="radio" name="p7" value="0"> c) Errores al escribir</label>
+                                    <label class="block"><input type="radio" name="p7" value="0"> d) Sinónimos</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 8 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">8. ¿Para qué se usan los números y signos en un instructivo?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p8" value="0"> a) Para que se vea bonito</label>
+                                    <label class="block"><input type="radio" name="p8" value="10"> b) Para ordenar pasos y advertir</label>
+                                    <label class="block"><input type="radio" name="p8" value="0"> c) Para contar palabras</label>
+                                    <label class="block"><input type="radio" name="p8" value="0"> d) No sirven de nada</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 9 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">9. ¿Qué indican los conectores de finalidad?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p9" value="0"> a) El tiempo que pasa</label>
+                                    <label class="block"><input type="radio" name="p9" value="0"> b) El lugar donde ocurre</label>
+                                    <label class="block"><input type="radio" name="p9" value="10"> c) El objetivo o propósito</label>
+                                    <label class="block"><input type="radio" name="p9" value="0"> d) La persona que lo hace</label>
+                                </div>
+                            </div>
+
+                            <!-- Pregunta 10 (10 pts) -->
+                            <div class="pregunta border-b pb-4" data-valor="10">
+                                <p class="font-semibold mb-2">10. ¿Cuál es una clasificación de los textos instructivos?</p>
+                                <div class="space-y-2 text-sm">
+                                    <label class="block"><input type="radio" name="p10" value="10"> a) Cotidianos, técnicos, didácticos y normativos</label>
+                                    <label class="block"><input type="radio" name="p10" value="0"> b) Largos, cortos, medianos</label>
+                                    <label class="block"><input type="radio" name="p10" value="0"> c) Alegres, tristes, serios</label>
+                                    <label class="block"><input type="radio" name="p10" value="0"> d) De papel, digitales, sonoros</label>
+                                </div>
+                            </div>
+
+                            <button id="terminarExamen" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-custom mt-4">
+                                Terminar y Ver Resultado
+                            </button>
+                        </div>
+
+                        <!-- RESULTADOS FINALES -->
+                        <div id="resultadosExamen" class="hidden text-center p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border-2 border-exam/30 mt-6">
+                            <h4 class="text-2xl font-bold text-exam mb-4">📋 RESULTADOS FINALES</h4>
+                            <div class="space-y-2 text-lg">
+                                <p><strong>Estudiante:</strong> <span id="resNombre"></span></p>
+                                <p><strong>Grado y Sección:</strong> <span id="resGradoSeccion"></span></p>
+                                <p class="text-red-600 font-semibold">❌ Errores cometidos: <span id="resErrores"></span></p>
+                                <p class="text-green-600 font-semibold">🏅 Puntos obtenidos: <span id="resPuntos"></span> / 100</p>
+                                <div id="resMensaje" class="mt-4 p-4 rounded-lg font-bold text-xl"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="bg-dark text-white/60 py-4 px-4 text-center text-sm mt-8">
+        <p>República Dominicana | KGTECH © 2026</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // FUNCIÓN: Quita acentos, signos y normaliza todo
+        function normalizarTexto(texto) {
+            return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').toLowerCase().trim();
+        }
+
+        // TEMAS DE LENGUA ESPAÑOLA
+        const baseDeTemas = [
+            {
+                materia: "Lengua Española",
+                tema: "Que son textos",
+                palabraClave: "textos",
+                definicion1: "Son unidades de comunicación completas formadas por un conjunto de oraciones y palabras organizadas con coherencia y cohesión. Tienen la finalidad de transmitir información, ideas, sentimientos o instrucciones entre un emisor y un receptor en un contexto determinado.",
+                definicion2: "Conjunto de palabras y oraciones que forman un mensaje completo y comprensible, diseñado para comunicar algo específico a quien lo lee o escucha.",
+                definicion3: "Mensaje completo y organizado.",
+                ejemplo: "Una carta, un cuento, una noticia o una receta de cocina son diferentes tipos de textos."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "A que se refiere la palabra funcion",
+                palabraClave: "funcion",
+                definicion1: "En el lenguaje, se refiere al propósito, objetivo o papel que cumple algo al ser utilizado. Indica para qué sirve un elemento, una palabra o un texto, y qué tarea o misión realiza dentro de la comunicación.",
+                definicion2: "Es el uso o finalidad que tiene algo. Responde a la pregunta: ¿Para qué sirve? En los textos, se refiere a la intención con la que se escribe.",
+                definicion3: "Para qué sirve o su propósito.",
+                ejemplo: "La función de un semáforo es regular el tráfico; la función de un texto informativo es dar datos."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Que son los textos funcionales",
+                palabraClave: "textos funcionales",
+                definicion1: "Son aquellos escritos diseñados con el propósito principal de cumplir una finalidad práctica, específica y útil. Sirven para resolver dudas, dar indicaciones, pedir algo, orientar o guiar al lector para realizar una acción o conseguir un resultado concreto.",
+                definicion2: "Textos que tienen como objetivo ayudar, guiar o facilitar una acción. Se centran en ser claros, breves y directos para que el receptor sepa qué hacer o cómo proceder.",
+                definicion3: "Escritos de utilidad práctica.",
+                ejemplo: "Recetas de cocina, reglamentos, solicitudes, manuales de uso o instrucciones para armar un mueble."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Ejemplos de textos funcionales",
+                palabraClave: "ejemplos textos funcionales",
+                definicion1: "Existen muchos tipos según su uso, entre los más comunes están: la receta culinaria, el manual de instrucciones, la solicitud o carta formal, el reglamento, la invitación, el currículum vitae, el aviso, la factura y la guía turística. Todos cumplen una función práctica.",
+                definicion2: "Se clasifican según para qué sirven: instructivos (guían), administrativos (trámites), sociales (comunicación) y laborales (trabajo). Son documentos útiles en la vida diaria.",
+                definicion3: "Recetas, manuales, cartas, reglamentos.",
+                ejemplo: "Un manual de cómo usar una licuadora, una carta para pedir un permiso o las reglas de un juego."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Que es un instructivo",
+                palabraClave: "instructivo",
+                definicion1: "Es un tipo de texto funcional que explica de forma ordenada, clara y detallada los pasos, normas o procedimientos necesarios para realizar una actividad, armar un objeto, usar un producto o lograr un objetivo determinado. Se basa en la lógica y la secuencia.",
+                definicion2: "Texto que indica paso a paso cómo hacer algo. Su característica principal es el orden lógico y la claridad para evitar errores al ejecutar la acción. Es esencial para guiar al usuario.",
+                definicion3: "Texto que explica cómo hacer algo.",
+                ejemplo: "Las instrucciones impresas dentro de la caja de un juguete, una receta de cocina o cómo instalar un programa."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Cual es la funcion de un instructivo",
+                palabraClave: "funcion instructivo",
+                definicion1: "Su función principal es orientar, dirigir y enseñar al lector el procedimiento exacto para realizar una acción, evitar errores, prevenir accidentes o garantizar que el resultado final sea el esperado. Busca que la persona sepa actuar correctamente y con seguridad.",
+                definicion2: "Guiar al usuario paso a paso, asegurar el buen uso de objetos o procedimientos y evitar confusiones o daños. Transmite seguridad al realizar la tarea correctamente.",
+                definicion3: "Guiar y enseñar procedimientos.",
+                ejemplo: "La función de un instructivo de seguridad es enseñar qué hacer en caso de incendio para protegerse."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Cual es la estructura general de un instructivo",
+                palabraClave: "estructura instructivo",
+                definicion1: "Generalmente se compone de: 1. Título: indica de qué trata. 2. Introducción: explica brevemente el objetivo. 3. Materiales o requisitos: lista lo necesario. 4. Procedimiento: los pasos numerados y ordenados. 5. Recomendaciones o advertencias: precauciones a tener en cuenta.",
+                definicion2: "Se organiza en partes: lo que se necesita, la lista de pasos en orden lógico y consejos o avisos importantes. Suele usar números o viñetas para separar cada acción y facilitar la lectura.",
+                definicion3: "Titulo, materiales, pasos y advertencias.",
+                ejemplo: "En una receta: Título (Pastel), Ingredientes, Preparación (pasos 1,2,3...) y Consejos finales."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "A que se refiere el se impersonal",
+                palabraClave: "se impersonal",
+                definicion1: "Es una forma gramatical donde se usa la palabra 'se' junto a un verbo en tercera persona, para expresar acciones sin indicar quién las realiza. Se utiliza cuando no interesa mencionar al sujeto, es desconocido o es general para todos.",
+                definicion2: "Construcción que usa 'se' para hablar de algo que se hace en general, sin decir quién lo hace. Ejemplo: 'Se vende casa' (no se dice quién vende, sino que la acción existe para cualquiera).",
+                definicion3: "Acción sin sujeto definido.",
+                ejemplo: "'Se habla español', 'Se prohíbe fumar', 'Se vive mejor con salud'."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Que son los conectores de orden y para que sirven en un instructivo",
+                palabraClave: "conectores de orden",
+                definicion1: "Son palabras o frases que sirven para unir ideas y señalar la secuencia o el momento exacto en que ocurren las acciones. En los instructivos son fundamentales porque indican el orden lógico que se debe seguir, evitando que se mezclen los pasos o se hagan al revés.",
+                definicion2: "Palabras que marcan la sucesión de acciones. Sirven para organizar el texto y decir qué va primero, qué va después y cuándo termina, logrando que el procedimiento sea claro y ordenado para el lector.",
+                definicion3: "Marcan el orden de los pasos.",
+                ejemplo: "Palabras como: primero, luego, después, a continuación, seguidamente, finalmente, por último."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Que son los adverbios",
+                palabraClave: "adverbios",
+                definicion1: "Son palabras invariables que se utilizan para modificar o complementar el significado de un verbo, un adjetivo u otro adverbio. Sirven para dar información sobre el lugar, el tiempo, la forma, la cantidad o la afirmación de la acción que se realiza.",
+                definicion2: "Palabras que añaden detalles a la acción. Responden a preguntas como: ¿Cuándo?, ¿Dónde?, ¿Cómo?, ¿Cuánto? o ¿De qué manera? No cambian su género ni número, siempre son iguales.",
+                definicion3: "Modifican y detallan acciones.",
+                ejemplo: "Rápidamente (modo), aquí (lugar), ayer (tiempo), mucho (cantidad), sí (afirmación)."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "A que se refiere el lexico tecnico",
+                palabraClave: "lexico tecnico",
+                definicion1: "Se refiere al conjunto de palabras, términos o expresiones propias de una actividad, oficio, ciencia o materia específica. Son vocablos que tienen un significado preciso y especializado, entendido principalmente por las personas que conocen o trabajan en ese tema.",
+                definicion2: "Vocabulario especializado de un área determinada. Se usa para nombrar cosas o procesos exactos que no tienen nombre común, permitiendo una comunicación precisa entre expertos o en instrucciones específicas.",
+                definicion3: "Vocabulario especializado.",
+                ejemplo: "En informática: 'archivo', 'servidor'; en medicina: 'diagnóstico', 'virus'; en mecánica: 'pistón', 'embrague'."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Para que se utilizan los signos y numeros en un instructivo",
+                palabraClave: "signos y numeros instructivo",
+                definicion1: "Se usan para organizar, clasificar y resaltar la información. Los números sirven para marcar la secuencia exacta de los pasos. Los signos gráficos (flechas, símbolos, iconos) sirven para llamar la atención, indicar precauciones, peligros o direcciones visualmente sin necesidad de leer mucho.",
+                definicion2: "Los números ordenan los pasos para que no se salten ni se cambien. Los signos ayudan a entender rápido, advierten sobre riesgos importantes y hacen el texto más fácil de seguir y visualizar.",
+                definicion3: "Ordenar pasos y advertir.",
+                ejemplo: "Números 1, 2, 3... para la secuencia; signo de advertencia ⚠️ o flecha ← para indicar dirección."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Que son los conectores de finalidad",
+                palabraClave: "conectores de finalidad",
+                definicion1: "Son palabras o expresiones que se emplean para indicar el objetivo, la intención o el propósito de lo que se está diciendo o haciendo. Sirven para relacionar una acción con el fin que se quiere conseguir al realizarla.",
+                definicion2: "Palabras que responden a '¿Para qué?'. Explican la razón o meta que se busca al ejecutar una acción, uniendo el procedimiento con su resultado esperado o el beneficio que se obtiene.",
+                definicion3: "Indican el objetivo o fin.",
+                ejemplo: "Palabras como: para, con el fin de, a fin de, con el objetivo de, para que."
+            },
+            {
+                materia: "Lengua Española",
+                tema: "Clasificacion de los textos instructivos",
+                palabraClave: "clasificacion textos instructivos",
+                definicion1: "Se clasifican según su uso y contenido en: 1. Instructivos de uso cotidiano (recetas, reglamentos). 2. Instructivos técnicos (manuales de aparatos, procedimientos industriales). 3. Instructivos didácticos (guías de estudio, ejercicios). 4. Normativos (leyes, estatutos, reglas de juego).",
+                definicion2: "Se dividen según a qué se dedican: los que sirven para la vida diaria, los técnicos para máquinas o procesos, los educativos para aprender y los normativos que establecen reglas que se deben cumplir obligatoriamente.",
+                definicion3: "Cotidianos, técnicos, didácticos y normativos.",
+                ejemplo: "Cotidiano: cómo llenar un formulario; Técnico: manual de una computadora; Didáctico: guía de tarea."
+            }
+        ];
+
+        // ELEMENTOS DE BÚSQUEDA
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const mensajeInicial = document.getElementById('mensajeInicial');
+        const contenidoRespuesta = document.getElementById('contenidoRespuesta');
+        const cargando = document.getElementById('cargando');
+        const noEncontrado = document.getElementById('noEncontrado');
+        const tituloTema = document.getElementById('tituloTema');
+        const nombreMateria = document.getElementById('nombreMateria').querySelector('span');
+        const def1 = document.getElementById('def1');
+        const def2 = document.getElementById('def2');
+        const def3 = document.getElementById('def3');
+        const ejemploTexto = document.getElementById('ejemploTexto');
+
+        // FUNCIÓN DE BÚSQUEDA
+        function buscarInformacion() {
+            const textoBusqueda = normalizarTexto(searchInput.value);
+            if (!textoBusqueda) return;
+
+            mensajeInicial.classList.add('hidden');
+            contenidoRespuesta.classList.add('hidden');
+            noEncontrado.classList.add('hidden');
+            cargando.classList.remove('hidden');
+
+            setTimeout(() => {
+                cargando.classList.add('hidden');
+                const resultado = baseDeTemas.find(item => {
+                    const clave = normalizarTexto(item.palabraClave);
+                    return textoBusqueda.includes(clave) || clave.includes(textoBusqueda);
+                });
+
+                if (resultado) {
+                    tituloTema.textContent = resultado.tema;
+                    nombreMateria.textContent = resultado.materia;
+                    def1.textContent = resultado.definicion1;
+                    def2.textContent = resultado.definicion2;
+                    def3.textContent = resultado.definicion3;
+                    ejemploTexto.textContent = resultado.ejemplo;
+                    contenidoRespuesta.classList.remove('hidden');
+                    contenidoRespuesta.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    noEncontrado.classList.remove('hidden');
+                }
+            }, 600);
+        }
+
+        searchBtn.addEventListener('click', buscarInformacion);
+        searchInput.addEventListener('keypress', e => e.key === 'Enter' && buscarInformacion());
+
+        // 📝 LÓGICA DEL EXAMEN
+        const btnAbrirExamen = document.getElementById('btnAbrirExamen');
+        const modalExamen = document.getElementById('modalExamen');
+        const cerrarModal = document.getElementById('cerrarModal');
+        const iniciarExamen = document.getElementById('iniciarExamen');
+        const datosEstudiante = document.getElementById('datosEstudiante');
+        const infoExamen = document.getElementById('infoExamen');
+        const preguntasExamen = document.getElementById('preguntasExamen');
+        const horaInicio = document.getElementById('horaInicio');
+        const tiempoRestante = document.getElementById('tiempoRestante');
+        const terminarExamen = document.getElementById('terminarExamen');
+        const resultadosExamen = document.getElementById('resultadosExamen');
+
+        let temporizador;
+        let tiempoTotal = 20 * 60; // 20 minutos en segundos
+
+        btnAbrirExamen.addEventListener('click', () => modalExamen.classList.remove('hidden'));
+        cerrarModal.addEventListener('click', () => {
+            modalExamen.classList.add('hidden');
+            clearInterval(temporizador);
+            resetExamen();
+        });
+
+        iniciarExamen.addEventListener('click', () => {
+            const nombre = document.getElementById('nombreEst').value;
+            const grado = document.getElementById('gradoEst').value;
+            const seccion = document.getElementById('seccionEst').value;
+            if(!nombre || !grado || !seccion) return alert("Llena todos los datos primero");
+
+            // Mostrar hora inicio
+            const ahora = new Date();
+            horaInicio.textContent = ahora.toLocaleTimeString();
+            
+            // Mostrar secciones
+            datosEstudiante.classList.add('hidden');
+            infoExamen.classList.remove('hidden');
+            preguntasExamen.classList.remove('hidden');
+
+            // Iniciar cuenta atrás
+            temporizador = setInterval(() => {
+                tiempoTotal--;
+                const min = Math.floor(tiempoTotal / 60);
+                const seg = tiempoTotal % 60;
+                tiempoRestante.textContent = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+
+                if(tiempoTotal <= 0) {
+                    clearInterval(temporizador);
+                    alert("⏰ ¡SE ACABÓ EL TIEMPO! El examen se cerrará automáticamente.");
+                    calcularResultados();
+                }
+            }, 1000);
+        });
+
+        terminarExamen.addEventListener('click', calcularResultados);
+
+        function calcularResultados() {
+            clearInterval(temporizador);
+            preguntasExamen.classList.add('hidden');
+            resultadosExamen.classList.remove('hidden');
+
+            let puntos = 0;
+            let errores = 0;
+            const preguntas = document.querySelectorAll('.pregunta');
+
+            preguntas.forEach(p => {
+                const valor = parseInt(p.dataset.valor);
+                const respuesta = p.querySelector('input:checked');
+                if(respuesta && respuesta.value === "10") {
+                    puntos += valor;
+                } else {
+                    errores++;
+                }
+            });
+
+            // Llenar datos
+            document.getElementById('resNombre').textContent = document.getElementById('nombreEst').value;
+            document.getElementById('resGradoSeccion').textContent = `${document.getElementById('gradoEst').value} - ${document.getElementById('seccionEst').value}`;
+            document.getElementById('resErrores').textContent = errores;
+            document.getElementById('resPuntos').textContent = puntos;
+
+            // Mensaje final
+            const mensajeDiv = document.getElementById('resMensaje');
+            if(puntos === 100) {
+                mensajeDiv.textContent = "🏆 ¡ERES LA LEYENDA! 🏆";
+                mensajeDiv.className = "mt-4 p-4 rounded-lg font-bold text-xl bg-yellow-100 text-yellow-700";
+            } else if(puntos >= 70) {
+                mensajeDiv.textContent = "🌟 ¡ERES UN VALIOSO! 🌟";
+                mensajeDiv.className = "mt-4 p-4 rounded-lg font-bold text-xl bg-green-100 text-green-700";
+            } else if(puntos >= 50) {
+                mensajeDiv.textContent = "📝 Podrías mejorar 📝";
+                mensajeDiv.className = "mt-4 p-4 rounded-lg font-bold text-xl bg-blue-100 text-blue-700";
+            } else {
+                mensajeDiv.textContent = "📚 Estudia más 📚";
+                mensajeDiv.className = "mt-4 p-4 rounded-lg font-bold text-xl bg-red-100 text-red-700";
+            }
+        }
+
+        function resetExamen() {
+            datosEstudiante.classList.remove('hidden');
+            infoExamen.classList.add('hidden');
+            preguntasExamen.classList.add('hidden');
+            resultadosExamen.classList.add('hidden');
+            tiempoTotal = 20 * 60;
+            document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+        }
+    </script>
+</body>
+</html>
